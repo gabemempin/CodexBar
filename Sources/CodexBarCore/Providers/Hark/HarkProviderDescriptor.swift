@@ -11,6 +11,8 @@ public enum HarkProviderDescriptor {
         color: .init(hex: 0xFF6B35),
         confetti: [0xFF6B35, 0xF4E8DB, 0x262626],
         noDataMessage: "Hark Pro reports usage limits, not a cost history.",
+        history: .unavailable,
+        burnDownWidgetSelectable: false,
         aliases: ["hark-pro"],
         webSource: .init(
             settingsSection: .init(HarkProviderSettingsKey.self, cookieSettings: CookieProviderSettings.self),

@@ -3,6 +3,13 @@ import Testing
 @testable import CodexBarCore
 
 struct HarkPluginTests {
+    @Test
+    func `identityless quotas cannot enter history or history based widgets`() {
+        let descriptor = HarkProviderDescriptor.descriptor
+        #expect(!descriptor.history.supportsPlanUtilization)
+        #expect(!descriptor.metadata.burnDownWidgetSelectable)
+    }
+
     // Synthetic values matching the fields read by Hark's public web bundle.
     static let summary = #"""
     {

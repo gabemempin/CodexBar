@@ -33,3 +33,7 @@ produces a parse error instead of displaying 0% used.
 Expired sessions (`401`) are rejected so Automatic mode can try another Chrome profile. Rate limits,
 access denials, and response-format changes have distinct errors. Only the `hark.com` origin receives
 session cookies. No account profile or payment details are requested or displayed.
+
+Saved quota history and the burn-down widget are unavailable because the billing summary does not
+provide a verified account owner. Switching browser sessions or manual headers cannot combine
+different accounts' usage records.
