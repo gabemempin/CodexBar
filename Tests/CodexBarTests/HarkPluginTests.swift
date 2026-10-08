@@ -10,7 +10,7 @@ struct HarkPluginTests {
         #expect(!descriptor.metadata.burnDownWidgetSelectable)
     }
 
-    // Synthetic values matching the fields read by Hark's public web bundle.
+    /// Synthetic values matching the fields read by Hark's public web bundle.
     static let summary = #"""
     {
       "plan": {"id":"free","name":"Hark Pro","unlimited":false},
@@ -66,8 +66,11 @@ struct HarkPluginTests {
         #expect(snapshot.identity?.loginMethod == "free")
     }
 
-    @Test(arguments: ["{}", "<html>Sign in</html>",
-                      #"{"plan":{"id":"free"},"meters":null}"#], BundledPluginTestSupport.engines)
+    @Test(arguments: [
+        "{}",
+        "<html>Sign in</html>",
+        #"{"plan":{"id":"free"},"meters":null}"#,
+    ], BundledPluginTestSupport.engines)
     func `missing quota data fails instead of displaying zero`(body: String, engine: ProviderPluginEngineKind) async {
         await CookiePluginFixtures.expectFailure(.parseFailure) { try await Self.fetch(body, engine: engine) }
     }
@@ -102,11 +105,13 @@ struct HarkPluginTests {
     {
         let attempts = LockIsolated(0)
         let rejected = LockIsolated<[String]>([])
-        let runtime = try BundledPluginTestSupport.runtime("hark", engine: engine, transport: ProviderHTTPTransportHandler {
-            request in
-            let expired = request.value(forHTTPHeaderField: "Cookie") == "session=expired"
-            return try CookiePluginFixtures.response(request, body: Self.summary, status: expired ? 401 : 200)
-        })
+        let runtime = try BundledPluginTestSupport.runtime(
+            "hark",
+            engine: engine,
+            transport: ProviderHTTPTransportHandler { request in
+                let expired = request.value(forHTTPHeaderField: "Cookie") == "session=expired"
+                return try CookiePluginFixtures.response(request, body: Self.summary, status: expired ? 401 : 200)
+            })
         let snapshot = try await runtime.fetchUsage(cookieSessionResolver: { domain, _ in
             #expect(domain == "hark.com")
             attempts.setValue(attempts.value + 1)
@@ -125,11 +130,13 @@ struct HarkPluginTests {
 
     @Test(arguments: BundledPluginTestSupport.engines)
     func `disabled cookies never access transport`(engine: ProviderPluginEngineKind) async throws {
-        let runtime = try BundledPluginTestSupport.runtime("hark", engine: engine, transport: ProviderHTTPTransportHandler {
-            request in
-            Issue.record("Disabled cookies reached transport")
-            return try CookiePluginFixtures.response(request, body: Self.summary)
-        })
+        let runtime = try BundledPluginTestSupport.runtime(
+            "hark",
+            engine: engine,
+            transport: ProviderHTTPTransportHandler { request in
+                Issue.record("Disabled cookies reached transport")
+                return try CookiePluginFixtures.response(request, body: Self.summary)
+            })
         await CookiePluginFixtures.expectFailure(.missingCredential) {
             try await runtime.fetchUsage(cookieSource: .off, cookieResolver: { _, _ in "session=fixture" })
         }
@@ -140,15 +147,17 @@ struct HarkPluginTests {
         engine: ProviderPluginEngineKind,
         status: Int = 200) async throws -> UsageSnapshot
     {
-        let runtime = try BundledPluginTestSupport.runtime("hark", engine: engine, transport: ProviderHTTPTransportHandler {
-            request in
-            #expect(request.url?.absoluteString == "https://hark.com/api/billing/summary")
-            #expect(request.httpMethod == "GET")
-            #expect(request.httpBody == nil)
-            #expect(request.value(forHTTPHeaderField: "Cookie") == "session=fixture")
-            #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
-            return try CookiePluginFixtures.response(request, body: body, status: status)
-        })
+        let runtime = try BundledPluginTestSupport.runtime(
+            "hark",
+            engine: engine,
+            transport: ProviderHTTPTransportHandler { request in
+                #expect(request.url?.absoluteString == "https://hark.com/api/billing/summary")
+                #expect(request.httpMethod == "GET")
+                #expect(request.httpBody == nil)
+                #expect(request.value(forHTTPHeaderField: "Cookie") == "session=fixture")
+                #expect(request.value(forHTTPHeaderField: "Accept") == "application/json")
+                return try CookiePluginFixtures.response(request, body: body, status: status)
+            })
         return try await runtime.fetchUsage(cookieSource: .manual, cookieResolver: { _, _ in "session=fixture" })
     }
 }

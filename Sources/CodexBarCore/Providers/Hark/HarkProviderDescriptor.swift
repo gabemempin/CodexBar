@@ -25,7 +25,10 @@ public enum HarkProviderDescriptor {
                 title: "Cookie header",
                 subtitle: "Paste the Cookie header from a signed-in hark.com billing summary request.",
                 placeholder: "Cookie: …",
-                action: (id: "hark-open-billing", title: "Open Hark Billing", url: "https://hark.com/settings/billing")),
+                action: (
+                    id: "hark-open-billing",
+                    title: "Open Hark Billing",
+                    url: "https://hark.com/settings/billing")),
             picker: .init(
                 id: "hark-cookie-source",
                 allowsOff: true,
