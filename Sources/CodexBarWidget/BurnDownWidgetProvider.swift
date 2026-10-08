@@ -75,6 +75,7 @@ enum BurnProviderChoice: String, AppEnum {
     case aiand
     case zoommate
     case xai
+    case xapi
     case notion
     case ibmbob
     case nous
@@ -173,6 +174,7 @@ enum BurnProviderChoice: String, AppEnum {
         .aiand: DisplayRepresentation(title: "ai&"),
         .zoommate: DisplayRepresentation(title: "ZoomMate"),
         .xai: DisplayRepresentation(title: "xAI"),
+        .xapi: DisplayRepresentation(title: "X API"),
         .notion: DisplayRepresentation(title: "Notion AI"),
         .ibmbob: DisplayRepresentation(title: "IBM Bob"),
         .nous: DisplayRepresentation(title: "Nous Portal"),
